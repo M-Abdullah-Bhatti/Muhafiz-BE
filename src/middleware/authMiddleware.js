@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const UserModel = require("../models/userModel");
+const UserModel = require("../models/user");
 
 const SECRET_KEY = "FITGURUAPI";
 
