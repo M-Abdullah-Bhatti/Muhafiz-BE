@@ -4,10 +4,11 @@ const {
   getAllPosts,
   updatePost,
 } = require("../controller/postController");
+const { isAuthenticatedUser } = require("../middleware/authMiddleware");
 const postRouter = express.Router();
 
-postRouter.post("/createPost", createPost);
-postRouter.get("/allPosts", getAllPosts);
-postRouter.put("/updatePost", updatePost);
+postRouter.post("/createPost", isAuthenticatedUser, createPost);
+postRouter.get("/allPosts", isAuthenticatedUser, getAllPosts);
+postRouter.put("/updatePost", isAuthenticatedUser, updatePost);
 
 module.exports = postRouter;
