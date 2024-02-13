@@ -14,8 +14,12 @@ const PostSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    location: {
-      type: String,
+    latitude: {
+      type: Number,
+      required: false,
+    },
+    longitude: {
+      type: Number,
       required: false,
     },
     user: {

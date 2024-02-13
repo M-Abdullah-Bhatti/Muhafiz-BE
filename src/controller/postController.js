@@ -3,7 +3,7 @@ const postModel = require("../models/postModel");
 // Create a new post
 const createPost = async (req, res) => {
   try {
-    const newPost = postModel.create(req.body);
+    const newPost = await postModel.create(req.body);
     res.status(201).json({
       data: newPost,
       status: true,
