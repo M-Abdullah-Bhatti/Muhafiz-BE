@@ -49,12 +49,16 @@ const signin = async (req, res) => {
   try {
     const existingUser = await userModel.findOne({ email: email });
     if (!existingUser) {
-      return res.status(404).json({ message: "invalid username or passowrd" });
+      return res
+        .status(404)
+        .json({ status: false, message: "invalid username or passowrd" });
     }
 
     const matchPassword = await bcrypt.compare(password, existingUser.password);
     if (!matchPassword) {
-      return res.status(404).json({ message: "invalid username or passowrd" });
+      return res
+        .status(404)
+        .json({ status: false, message: "invalid username or passowrd" });
     }
 
     const token = jwt.sign(
@@ -63,10 +67,15 @@ const signin = async (req, res) => {
     );
     res
       .status(200)
-      .json({ user: existingUser, token: token, message: "Login successfull" });
+      .json({
+        status: true,
+        user: existingUser,
+        token: token,
+        message: "Login successfull",
+      });
   } catch (error) {
     console.log("🚀 ~ file: userController.js:47 ~ signin ~ error:", error);
-    res.status(500).json({ message: "something went wrong" });
+    res.status(500).json({ status: false, message: "something went wrong" });
   }
 };
 

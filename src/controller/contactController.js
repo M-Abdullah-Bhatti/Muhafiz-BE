@@ -66,6 +66,9 @@ const getSingleContact = async (req, res, next) => {
   try {
     const { contactId } = req.params;
 
+    console.log("contactId-->");
+    console.log(contactId);
+
     if (!mongoose.Types.ObjectId.isValid(contactId)) {
       return res.status(400).json({
         status: false,
@@ -87,6 +90,7 @@ const getSingleContact = async (req, res, next) => {
       data: foundContact,
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ status: false, message: error.message });
   }
 };
