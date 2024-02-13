@@ -8,6 +8,7 @@ const goalRouter = require("./routes/goalRoutes");
 const contactRouter = require("./routes/contactRoutes");
 const postRouter = require("./routes/postRoutes");
 const commentRouter = require("./routes/commentRoutes");
+const incidentRouter = require("./routes/incidentRoutes");
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use("/goals", goalRouter);
 app.use("/contact", contactRouter);
 app.use("/post", postRouter);
 app.use("/comment", commentRouter);
+app.use("/incident", incidentRouter);
 
 app.listen(3001, () => {
   console.log("server listening on port 3001");
