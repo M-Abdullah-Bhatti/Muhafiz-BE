@@ -45,6 +45,8 @@ const addLikesOnPost = async (req, res) => {
       // Create a notification for the post's owner
       await createNotification("like", userId, post.user, postId);
 
+      await post.save();
+
       // Return success message
       return res.status(200).json({
         status: true,

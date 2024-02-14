@@ -1,6 +1,7 @@
 const postModel = require("../models/postModel");
 const commentModel = require("../models/commentModel");
 const likeModel = require("../models/likeModel");
+const notificationModel = require("../models/notificationModel");
 
 // Create a new post
 const createPost = async (req, res) => {
@@ -19,9 +20,20 @@ const createPost = async (req, res) => {
 // Get all posts
 const getAllPosts = async (req, res) => {
   try {
-    const posts = await postModel.find();
-    if (!posts) {
-      return res.status(404).json({ status: false, message: "No post found" });
+    const posts = await postModel
+      .find()
+      .populate({
+        path: "likes",
+        populate: { path: "user", select: "_id username" }, // Populate comments with user details
+      })
+
+      .populate({
+        path: "comments",
+        populate: { path: "user", select: "_id username email" }, // Populate comments with user details
+      });
+
+    if (!posts || posts.length === 0) {
+      return res.status(404).json({ status: false, message: "No posts found" });
     }
 
     return res.status(201).json({
