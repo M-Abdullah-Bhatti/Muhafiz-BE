@@ -1,17 +1,14 @@
 const express = require("express");
 const {
   createContact,
-  getAllContacts,
   getSingleContact,
+  getAllMyContacts,
 } = require("../controller/contactController");
+const { isAuthenticatedUser } = require("../middleware/authMiddleware");
 const userRouter = express.Router();
 
-userRouter.post("/createContact", createContact);
-userRouter.get("/getAllContacts", getAllContacts);
-userRouter.get("/getSingleContact", getSingleContact);
-// userRouter.post("/signin", signin);
-// userRouter.post("/sendemail", sendEmail);
-// userRouter.post("/verifyOtp", verifyOtp);
-// userRouter.put("/updatePassword/:id", updatePassword);
+userRouter.post("/createContact", isAuthenticatedUser, createContact);
+userRouter.get("/getAllMyContacts", isAuthenticatedUser, getAllMyContacts);
+userRouter.get("/getSingleContact", isAuthenticatedUser, getSingleContact);
 
 module.exports = userRouter;

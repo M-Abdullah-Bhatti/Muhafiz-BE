@@ -2,12 +2,16 @@ const contactModel = require("../models/contacts");
 
 const createContact = async (req, res) => {
   try {
+    // Add user to the contact's body if not already included
+    req.body.user = req.user; // assuming req.user contains the user's identifier
+
     const existingContact = await contactModel.findOne({
       phoneNumber: req.body.phoneNumber,
+      user: req.body.user, // Ensure we're checking within the context of the logged-in user
     });
 
     if (existingContact) {
-      return res.status(400).json({ message: "Contact already exist" });
+      return res.status(400).json({ message: "Contact already exists" });
     }
 
     const result = await contactModel.create(req.body);
@@ -16,16 +20,17 @@ const createContact = async (req, res) => {
       .status(201)
       .json({ data: result, status: true, message: "New contact added!" });
   } catch (error) {
-    res.status(500).json({ message: "something went wrong" });
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
-const getAllContacts = async (req, res, next) => {
+const getAllMyContacts = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const contactsPerPage = parseInt(req.query.contactsPerPage) || 5;
 
-    const totalContacts = await contactModel.countDocuments();
+    // Count only contacts that belong to the logged-in user
+    const totalContacts = await contactModel.countDocuments({ user: req.user });
 
     if ((page - 1) * contactsPerPage >= totalContacts) {
       return res.status(200).json({
@@ -35,7 +40,7 @@ const getAllContacts = async (req, res, next) => {
     }
 
     const allContacts = await contactModel
-      .find()
+      .find({ user: req.user }) // Ensure we're fetching contacts for the logged-in user
       .skip((page - 1) * contactsPerPage)
       .limit(contactsPerPage);
 
@@ -97,6 +102,6 @@ const getSingleContact = async (req, res, next) => {
 
 module.exports = {
   createContact,
-  getAllContacts,
+  getAllMyContacts,
   getSingleContact,
 };
