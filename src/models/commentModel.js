@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 
 const CommentSchema = mongoose.Schema(
   {
-    content: {
+    text: {
       type: String,
       required: true,
     },
-    createdBy: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,

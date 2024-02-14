@@ -1,5 +1,19 @@
 const notificationModel = require("../models/notificationModel");
 
+const createNotification = async (type, initiatorId, recipientId, postId) => {
+  try {
+    const notification = await notificationModel.create({
+      type,
+      initiator: initiatorId,
+      recipient: recipientId,
+      post: postId,
+    });
+    console.log("Notification created successfully", notification);
+  } catch (error) {
+    console.error("Error creating notification", error);
+  }
+};
+
 const getAllNotificationsForUser = async (req, res) => {
   const { userId } = req.params;
 
@@ -48,4 +62,5 @@ const markNotificationAsRead = async (req, res) => {
 module.exports = {
   getAllNotificationsForUser,
   markNotificationAsRead,
+  createNotification,
 };

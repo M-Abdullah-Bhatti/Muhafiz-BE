@@ -1,11 +1,11 @@
 const express = require("express");
 const {
-  addComment,
   getCommentsByPost,
+  addCommentOnPost,
 } = require("../controller/commentController");
 const commentRouter = express.Router();
 
-commentRouter.post("/createPost", addComment);
-commentRouter.get("/allPosts", getCommentsByPost);
+commentRouter.post("/addCommentOnPost/:postId", addCommentOnPost);
+commentRouter.get("/getCommentsByPost/:postId", getCommentsByPost);
 
 module.exports = commentRouter;

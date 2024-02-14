@@ -1,19 +1,32 @@
 const postModel = require("../models/postModel");
 const commentModel = require("../models/commentModel");
+const { createNotification } = require("./notificationController");
 
 // Add a comment to a post
-const addComment = async (req, res) => {
-  const { postId } = req.query;
+const addCommentOnPost = async (req, res) => {
+  const { postId } = req.params;
+  const { userId, text } = req.body;
 
   try {
-    const newComment = commentModel.create(req.body);
+    const newComment = await commentModel.create({
+      post: postId,
+      user: userId,
+      text: text,
+    });
 
     // Optionally, add the comment to the post's comments array
-    await Post.findByIdAndUpdate(postId, {
+    await postModel.findByIdAndUpdate(postId, {
       $push: { comments: newComment._id },
     });
 
-    res.status(201).json({
+    //  create a notification for the post's owner
+    const post = await postModel.findById(postId);
+
+    if (post) {
+      await createNotification("comment", userId, post.user, postId);
+    }
+
+    return res.status(201).json({
       data: newComment,
       status: true,
       message: "Comment added successfully!",
@@ -25,7 +38,7 @@ const addComment = async (req, res) => {
 
 // Get all comments for a post
 const getCommentsByPost = async (req, res) => {
-  const { postId } = req.query;
+  const { postId } = req.params;
 
   try {
     const comments = await commentModel.find({ post: postId });
@@ -34,7 +47,7 @@ const getCommentsByPost = async (req, res) => {
         .status(404)
         .json({ status: false, message: "No record found" });
     }
-    res.status(201).json({
+    return res.status(201).json({
       data: comments,
       status: true,
     });
@@ -44,6 +57,6 @@ const getCommentsByPost = async (req, res) => {
 };
 
 module.exports = {
-  addComment,
+  addCommentOnPost,
   getCommentsByPost,
 };

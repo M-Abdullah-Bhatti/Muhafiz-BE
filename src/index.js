@@ -8,6 +8,7 @@ const goalRouter = require("./routes/goalRoutes");
 const contactRouter = require("./routes/contactRoutes");
 const postRouter = require("./routes/postRoutes");
 const commentRouter = require("./routes/commentRoutes");
+const likeRouter = require("./routes/likeRoutes");
 const incidentRouter = require("./routes/incidentRoutes");
 
 const app = express();
@@ -15,10 +16,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(passport.initialize());
-
-// app.get("/", (req, res) => {
-//     res.status(200).json({message: "kem cho"});
-// });
 
 app.use((req, res, next) => {
   console.log("HTTP METHOD - " + req.method + ", URL - " + req.url);
@@ -30,6 +27,7 @@ app.use("/goals", goalRouter);
 app.use("/contact", contactRouter);
 app.use("/post", postRouter);
 app.use("/comment", commentRouter);
+app.use("/like", likeRouter);
 app.use("/incident", incidentRouter);
 
 app.listen(3001, () => {
