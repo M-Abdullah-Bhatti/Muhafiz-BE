@@ -14,7 +14,7 @@ const createContact = async (req, res) => {
 
     return res
       .status(201)
-      .json({ data: result, status: true, message: "Account is Created" });
+      .json({ data: result, status: true, message: "New contact added!" });
   } catch (error) {
     res.status(500).json({ message: "something went wrong" });
   }

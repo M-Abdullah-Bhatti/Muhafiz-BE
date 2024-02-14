@@ -6,11 +6,7 @@ const ContactSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    firstName: {
-      type: String,
-      require: true,
-    },
-    lastName: {
+    name: {
       type: String,
       require: true,
     },
@@ -22,9 +18,8 @@ const ContactSchema = mongoose.Schema(
       type: String,
       require: false,
     },
-
     address: {
-      type: Number,
+      type: String,
       require: true,
     },
   },
