@@ -7,7 +7,6 @@ exports.isAuthenticatedUser = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(" ")[1];
-    console.log("token: ", token);
 
     if (token == null || authHeader == null || authHeader == "") {
       return res
@@ -16,7 +15,6 @@ exports.isAuthenticatedUser = async (req, res, next) => {
     }
 
     const verify = jwt.verify(token, SECRET_KEY);
-    console.log("verify: ", verify);
     if (verify) {
       req.user = await UserModel.findById(verify.id);
       return next();

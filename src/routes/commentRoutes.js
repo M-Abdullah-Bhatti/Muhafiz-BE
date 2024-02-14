@@ -3,9 +3,19 @@ const {
   getCommentsByPost,
   addCommentOnPost,
 } = require("../controller/commentController");
+const { isAuthenticatedUser } = require("../middleware/authMiddleware");
+
 const commentRouter = express.Router();
 
-commentRouter.post("/addCommentOnPost/:postId", addCommentOnPost);
-commentRouter.get("/getCommentsByPost/:postId", getCommentsByPost);
+commentRouter.post(
+  "/addCommentOnPost/:postId",
+  isAuthenticatedUser,
+  addCommentOnPost
+);
+commentRouter.get(
+  "/getCommentsByPost/:postId",
+  isAuthenticatedUser,
+  getCommentsByPost
+);
 
 module.exports = commentRouter;

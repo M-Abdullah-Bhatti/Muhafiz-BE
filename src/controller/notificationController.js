@@ -8,7 +8,6 @@ const createNotification = async (type, initiatorId, recipientId, postId) => {
       recipient: recipientId,
       post: postId,
     });
-    console.log("Notification created successfully", notification);
   } catch (error) {
     console.error("Error creating notification", error);
   }

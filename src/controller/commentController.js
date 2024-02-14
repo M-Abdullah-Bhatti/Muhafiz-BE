@@ -5,9 +5,18 @@ const { createNotification } = require("./notificationController");
 // Add a comment to a post
 const addCommentOnPost = async (req, res) => {
   const { postId } = req.params;
-  const { userId, text } = req.body;
+  const userId = req?.user?._id;
+  const { text } = req.body;
 
   try {
+    const post = await postModel.findById(postId);
+    if (!post) {
+      return res.status(404).json({
+        status: false,
+        message: "Post not found",
+      });
+    }
+
     const newComment = await commentModel.create({
       post: postId,
       user: userId,
@@ -20,7 +29,6 @@ const addCommentOnPost = async (req, res) => {
     });
 
     //  create a notification for the post's owner
-    const post = await postModel.findById(postId);
 
     if (post) {
       await createNotification("comment", userId, post.user, postId);
@@ -41,6 +49,14 @@ const getCommentsByPost = async (req, res) => {
   const { postId } = req.params;
 
   try {
+    const post = await postModel.findById(postId);
+    if (!post) {
+      return res.status(404).json({
+        status: false,
+        message: "Post not found",
+      });
+    }
+
     const comments = await commentModel.find({ post: postId });
     if (comments.length === 0) {
       return res

@@ -4,7 +4,7 @@ const { createNotification } = require("./notificationController");
 
 const addLikesOnPost = async (req, res) => {
   const { postId } = req.params;
-  const userId = req.body.userId;
+  const userId = req?.user?._id;
 
   try {
     const post = await postModel.findById(postId);
@@ -13,28 +13,45 @@ const addLikesOnPost = async (req, res) => {
       return res.status(404).json({ status: false, message: "Post not found" });
     }
 
-    const alreadyLiked = postModel.likes.includes(userId);
+    // Check if the user has already liked the post
+    const alreadyLiked = await likeModel.findOne({
+      post: postId,
+      user: userId,
+    });
+
     if (alreadyLiked) {
       // User already liked the post, so remove the like
-      post.likes.pull(userId); // Mongoose pull to remove from array
+      await likeModel.findByIdAndDelete(alreadyLiked?._id);
+
+      // Remove like ID from the post's likes array
+      post.likes.pull(alreadyLiked._id);
+
+      // Return success message
+      return res.status(200).json({
+        status: true,
+        message: "Like removed from the post",
+        data: { likesCount: post.likes.length },
+      });
     } else {
       // User hasn't liked the post yet, so add the like
-      post.likes.push(userId);
+      const newLike = await likeModel.create({
+        post: postId,
+        user: userId,
+      });
+
+      // Add like ID to the post's likes array
+      post.likes.push(newLike._id);
+
       // Create a notification for the post's owner
-      if (post) {
-        await createNotification("like", userId, post.user, postId);
-      }
+      await createNotification("like", userId, post.user, postId);
+
+      // Return success message
+      return res.status(200).json({
+        status: true,
+        message: "Post liked successfully",
+        data: { likesCount: post.likes.length },
+      });
     }
-
-    await post.save();
-
-    return res.status(200).json({
-      status: true,
-      message: alreadyLiked
-        ? "Like removed from the post"
-        : "Post liked successfully",
-      data: { likesCount: post.likes.length },
-    });
   } catch (error) {
     console.error("Error toggling like on post:", error);
     return res
@@ -47,6 +64,12 @@ const getLikesByPost = async (req, res) => {
   const { postId } = req.params;
 
   try {
+    const post = await postModel.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ status: false, message: "Post not found" });
+    }
+
     // Find all likes associated with the given postId
     const likes = await likeModel.find({ post: postId });
 
