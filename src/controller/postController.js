@@ -1,16 +1,18 @@
 const postModel = require("../models/postModel");
+const commentModel = require("../models/commentModel");
+const likeModel = require("../models/likeModel");
 
 // Create a new post
 const createPost = async (req, res) => {
   try {
     const newPost = await postModel.create(req.body);
-    res.status(201).json({
+    return res.status(201).json({
       data: newPost,
       status: true,
       message: "Post created successfully!",
     });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    return res.status(400).json({ message: error.message });
   }
 };
 
@@ -18,39 +20,73 @@ const createPost = async (req, res) => {
 const getAllPosts = async (req, res) => {
   try {
     const posts = await postModel.find();
-    if (posts.length === 0) {
-      return res
-        .status(404)
-        .json({ status: false, message: "No record found" });
+    if (!posts) {
+      return res.status(404).json({ status: false, message: "No post found" });
     }
-    res.status(201).json({
+
+    return res.status(201).json({
       data: posts,
       status: true,
     });
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    return res.status(404).json({ message: error.message });
   }
 };
 
 // Update a post
 const updatePost = async (req, res) => {
   try {
-    const { postId } = req.query;
+    const { postId } = req.params;
     if (!postId) {
-      return res
-        .status(400)
-        .json({ status: false, message: "Insufficient details" });
+      return res.status(400).json({ status: false, message: "No post found" });
     }
     const updatedPost = await postModel.findByIdAndUpdate(postId, req.body, {
       new: true,
     });
-    res.status(200).json({
-      data: posts,
+    return res.status(200).json({
+      data: updatedPost,
       status: true,
       message: "Post updated successfully",
     });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+const deletePost = async (req, res) => {
+  const { postId } = req.params;
+
+  try {
+    const posts = await postModel.find();
+    if (!posts) {
+      return res.status(404).json({ status: false, message: "No post found" });
+    }
+
+    // Delete likes associated with the post
+    await likeModel.deleteMany({ post: postId });
+
+    // Delete comments associated with the post
+    await commentModel.deleteMany({ post: postId });
+
+    // Delete notifications associated with the post
+    await notificationModel.deleteMany({ post: postId });
+
+    // Delete the post itself
+    const deletedPost = await postModel.findByIdAndDelete(postId);
+
+    if (!deletedPost) {
+      return res.status(404).json({ status: false, message: "Post not found" });
+    }
+
+    return res.status(200).json({
+      status: true,
+      message: "Post deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting post and related data:", error);
+    return res
+      .status(500)
+      .json({ status: false, message: "Error deleting post and related data" });
   }
 };
 
@@ -58,4 +94,5 @@ module.exports = {
   createPost,
   getAllPosts,
   updatePost,
+  deletePost,
 };
