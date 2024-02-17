@@ -62,17 +62,19 @@ const signin = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { email: existingUser.email, id: existingUser._id },
+      {
+        email: existingUser.email,
+        name: existingUser.username,
+        id: existingUser._id,
+      },
       SECRET_KEY
     );
-    res
-      .status(200)
-      .json({
-        status: true,
-        user: existingUser,
-        token: token,
-        message: "Login successfull",
-      });
+    res.status(200).json({
+      status: true,
+      user: existingUser,
+      token: token,
+      message: "Login successfull",
+    });
   } catch (error) {
     console.log("🚀 ~ file: userController.js:47 ~ signin ~ error:", error);
     res.status(500).json({ status: false, message: "something went wrong" });

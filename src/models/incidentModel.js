@@ -6,7 +6,7 @@ const IncidentSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    // theft, robbery and assault
+    // Theft, Robbery, Assault and Cyber crime
     category: {
       type: String,
       require: true,
@@ -32,7 +32,7 @@ const IncidentSchema = mongoose.Schema(
       require: false,
     },
     dateAndTime: {
-      type: Date,
+      type: String,
       require: false,
     },
     location: {
