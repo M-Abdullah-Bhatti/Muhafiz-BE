@@ -32,6 +32,8 @@ const addLikesOnPost = async (req, res) => {
       // Delete the notification if it exists
       await deleteNotification("like", userId, post.user, postId);
 
+      await post.save();
+
       // Return success message
       return res.status(200).json({
         status: true,
@@ -59,7 +61,7 @@ const addLikesOnPost = async (req, res) => {
       return res.status(200).json({
         status: true,
         message: "Post liked successfully",
-        // data: { likesCount: post.likes.length },
+        data: { likesCount: post.likes.length },
       });
     }
   } catch (error) {
