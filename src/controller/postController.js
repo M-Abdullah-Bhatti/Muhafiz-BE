@@ -23,6 +23,10 @@ const getAllPosts = async (req, res) => {
     const posts = await postModel
       .find()
       .populate({
+        path: "user",
+        select: "_id username",
+      })
+      .populate({
         path: "likes",
         populate: { path: "user", select: "_id username" }, // Populate comments with user details
       })
