@@ -29,8 +29,7 @@ const addCommentOnPost = async (req, res) => {
     });
 
     //  create a notification for the post's owner
-
-    if (post) {
+    if (post && post.user.toString() !== userId.toString()) {
       await createNotification("comment", userId, post.user, postId);
     }
 

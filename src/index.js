@@ -10,6 +10,7 @@ const postRouter = require("./routes/postRoutes");
 const commentRouter = require("./routes/commentRoutes");
 const likeRouter = require("./routes/likeRoutes");
 const incidentRouter = require("./routes/incidentRoutes");
+const notificationRouter = require("./routes/notificationRoute");
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use("/contact", contactRouter);
 app.use("/post", postRouter);
 app.use("/comment", commentRouter);
 app.use("/like", likeRouter);
+app.use("/notification", notificationRouter);
 app.use("/incident", incidentRouter);
 
 app.listen(3001, () => {

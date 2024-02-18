@@ -1,5 +1,5 @@
 const express = require("express");
-const {} = require("../middleware/authMiddleware");
+const { isAuthenticatedUser } = require("../middleware/authMiddleware");
 const {
   getAllNotificationsForUser,
   markNotificationAsRead,
@@ -7,9 +7,14 @@ const {
 
 const notificationRouter = express.Router();
 
-notificationRouter.get("/notifications/:userId", getAllNotificationsForUser);
+notificationRouter.get(
+  "/getAllNotificationsForUser/:userId",
+  isAuthenticatedUser,
+  getAllNotificationsForUser
+);
 notificationRouter.patch(
-  "/notifications/read/:notificationId",
+  "/markNotificationAsRead/:notificationId",
+  isAuthenticatedUser,
   markNotificationAsRead
 );
 

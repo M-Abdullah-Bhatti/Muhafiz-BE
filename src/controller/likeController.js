@@ -1,6 +1,9 @@
 const postModel = require("../models/postModel");
 const likeModel = require("../models/likeModel");
-const { createNotification } = require("./notificationController");
+const {
+  createNotification,
+  deleteNotification,
+} = require("./notificationController");
 
 const addLikesOnPost = async (req, res) => {
   const { postId } = req.params;
@@ -26,6 +29,9 @@ const addLikesOnPost = async (req, res) => {
       // Remove like ID from the post's likes array
       post.likes.pull(alreadyLiked._id);
 
+      // Delete the notification if it exists
+      await deleteNotification("like", userId, post.user, postId);
+
       // Return success message
       return res.status(200).json({
         status: true,
@@ -42,8 +48,10 @@ const addLikesOnPost = async (req, res) => {
       // Add like ID to the post's likes array
       post.likes.push(newLike._id);
 
-      // Create a notification for the post's owner
-      await createNotification("like", userId, post.user, postId);
+      if (post.user.toString() !== userId.toString()) {
+        // Create a notification for the post's owner
+        await createNotification("like", userId, post.user, postId);
+      }
 
       await post.save();
 
@@ -51,7 +59,7 @@ const addLikesOnPost = async (req, res) => {
       return res.status(200).json({
         status: true,
         message: "Post liked successfully",
-        data: { likesCount: post.likes.length },
+        // data: { likesCount: post.likes.length },
       });
     }
   } catch (error) {
