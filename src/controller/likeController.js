@@ -10,7 +10,7 @@ const addLikesOnPost = async (req, res) => {
   const userId = req?.user?._id;
 
   try {
-    const post = await postModel.findById(postId);
+    let post = await postModel.findById(postId);
 
     if (!post) {
       return res.status(404).json({ status: false, message: "Post not found" });
@@ -33,12 +33,16 @@ const addLikesOnPost = async (req, res) => {
       await deleteNotification("like", userId, post.user, postId);
 
       await post.save();
+      post = await postModel.findById(postId).populate({
+        path: "likes",
+        populate: { path: "user", select: "_id username" },
+      });
 
       // Return success message
       return res.status(200).json({
         status: true,
         message: "Like removed from the post",
-        data: { likesCount: post.likes.length },
+        data: post,
       });
     } else {
       // User hasn't liked the post yet, so add the like
@@ -56,12 +60,16 @@ const addLikesOnPost = async (req, res) => {
       }
 
       await post.save();
+      post = await postModel.findById(postId).populate({
+        path: "likes",
+        populate: { path: "user", select: "_id username" },
+      });
 
       // Return success message
       return res.status(200).json({
         status: true,
         message: "Post liked successfully",
-        data: { likesCount: post.likes.length },
+        data: post,
       });
     }
   } catch (error) {
