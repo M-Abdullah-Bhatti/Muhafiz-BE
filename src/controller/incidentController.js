@@ -64,8 +64,54 @@ const getSingleIncident = async (req, res, next) => {
   }
 };
 
+const getAllMyIncidents = async (req, res, next) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const incidentsPerPage = parseInt(req.query.incidentsPerPage) || 5;
+
+    // Count only contacts that belong to the logged-in user
+    const totalIncidents = await incidentModel.countDocuments({
+      user: req.user,
+    });
+
+    if ((page - 1) * incidentsPerPage >= totalIncidents) {
+      return res.status(200).json({
+        status: false,
+        message: "No more records",
+      });
+    }
+
+    const allIncidents = await incidentModel
+      .find({ user: req.user }) // Ensure we're fetching contacts for the logged-in user
+      .skip((page - 1) * incidentsPerPage)
+      .limit(incidentsPerPage);
+
+    if (allIncidents.length === 0) {
+      return res.status(200).json({
+        status: false,
+        message: "No Record Found",
+      });
+    }
+
+    let data = {
+      currentPage: page,
+      incidentsPerPage: incidentsPerPage,
+      totalIncidents: totalIncidents,
+      incidents: allIncidents,
+    };
+
+    return res.status(200).json({
+      status: true,
+      data: data,
+    });
+  } catch (error) {
+    res.status(500).json({ status: false, message: error.message });
+  }
+};
+
 module.exports = {
   createIncident,
   getAllIncidents,
   getSingleIncident,
+  getAllMyIncidents,
 };
