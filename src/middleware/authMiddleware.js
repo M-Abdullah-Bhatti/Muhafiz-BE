@@ -17,6 +17,7 @@ exports.isAuthenticatedUser = async (req, res, next) => {
     const verify = jwt.verify(token, SECRET_KEY);
     if (verify) {
       req.user = await UserModel.findById(verify.id);
+
       return next();
     } else {
       return res.status(403).send({ message: "Unauthorized Access" });
