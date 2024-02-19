@@ -28,10 +28,15 @@ const addCommentOnPost = async (req, res) => {
       $push: { comments: newComment._id },
     });
 
+    // Populate the newly created comment with user details
+    await newComment.populate("user", "_id username email");
+
     //  create a notification for the post's owner
     if (post && post.user.toString() !== userId.toString()) {
       await createNotification("comment", userId, post.user, postId);
     }
+
+    await post.save();
 
     return res.status(201).json({
       data: newComment,
