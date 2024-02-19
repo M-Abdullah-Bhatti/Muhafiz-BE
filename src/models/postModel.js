@@ -14,6 +14,12 @@ const PostSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+
+    imageType: {
+      type: String,
+      required: false,
+    },
+
     latitude: {
       type: Number,
       required: false,

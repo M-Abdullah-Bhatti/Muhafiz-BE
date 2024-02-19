@@ -41,12 +41,10 @@ const getAllNotificationsForUser = async (req, res) => {
       }); // Get most recent notifications first
 
     if (!notifications || notifications.length === 0) {
-      return res
-        .status(404)
-        .json({
-          status: false,
-          message: "There is no notification at this moment",
-        });
+      return res.status(404).json({
+        status: false,
+        message: "There is no notification at this moment",
+      });
     }
 
     return res.json({
