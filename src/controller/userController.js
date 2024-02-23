@@ -182,10 +182,50 @@ const updatePassword = async (req, res) => {
   }
 };
 
+const getSingleUser = async (req, res, next) => {
+  try {
+    const user = await userModel.findById(req.user);
+
+    if (!user) {
+      return res.status(404).json({
+        status: false,
+        message: "Record not found",
+      });
+    }
+
+    return res.status(200).json({
+      status: true,
+      data: user,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ status: false, message: error.message });
+  }
+};
+
+// Update a post
+const updateUser = async (req, res) => {
+  try {
+    const updatedUser = await userModel.findByIdAndUpdate(req.user, req.body, {
+      new: true,
+    });
+    return res.status(200).json({
+      data: updatedUser,
+      status: true,
+      message: "Profile updated successfully",
+    });
+  } catch (error) {
+    console.log("error: ", error);
+    return res.status(400).json({ message: error.message });
+  }
+};
+
 module.exports = {
   signup,
   signin,
   sendEmail,
   verifyOtp,
   updatePassword,
+  getSingleUser,
+  updateUser,
 };
