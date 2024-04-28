@@ -32,7 +32,7 @@ const IncidentSchema = mongoose.Schema(
       require: false,
     },
     dateAndTime: {
-      type: String,
+      type: Date,
       require: false,
     },
     location: {
