@@ -4,6 +4,8 @@ const {
   getAllIncidents,
   getSingleIncident,
   getAllMyIncidents,
+  getAllIncidentsForAdmin,
+  incidentDashboard,
 } = require("../controller/incidentController");
 const { isAuthenticatedUser } = require("../middleware/authMiddleware");
 const incidentRouter = express.Router();
@@ -15,6 +17,16 @@ incidentRouter.get(
   "/getAllMyIncidents",
   isAuthenticatedUser,
   getAllMyIncidents
+);
+incidentRouter.get(
+  "/getAllIncidents",
+  isAuthenticatedUser,
+  getAllIncidentsForAdmin
+);
+incidentRouter.get(
+  "/incidentDashboard",
+  // isAuthenticatedUser,
+  incidentDashboard
 );
 
 module.exports = incidentRouter;

@@ -47,6 +47,10 @@ const IncidentSchema = mongoose.Schema(
       type: String,
       require: false,
     },
+    resolved: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

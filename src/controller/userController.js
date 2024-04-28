@@ -61,6 +61,12 @@ const signin = async (req, res) => {
         .json({ status: false, message: "invalid username or passowrd" });
     }
 
+    if (existingUser.role == "admin") {
+      return res
+        .status(404)
+        .json({ status: false, message: "Can't access to this account" });
+    }
+
     const token = jwt.sign(
       {
         email: existingUser.email,
@@ -69,6 +75,53 @@ const signin = async (req, res) => {
       },
       SECRET_KEY
     );
+    res.status(200).json({
+      status: true,
+      user: existingUser,
+      token: token,
+      message: "Login successfull",
+    });
+  } catch (error) {
+    console.log("🚀 ~ file: userController.js:47 ~ signin ~ error:", error);
+    res.status(500).json({ status: false, message: "something went wrong" });
+  }
+};
+
+const adminLogin = async (req, res) => {
+  const { departmentName, password } = req.body;
+
+  try {
+    const existingUser = await userModel.findOne({
+      departmentName: departmentName,
+    });
+    if (!existingUser) {
+      return res
+        .status(404)
+        .json({ status: false, message: "invalid departmentName or passowrd" });
+    }
+
+    const matchPassword = await bcrypt.compare(password, existingUser.password);
+    if (!matchPassword) {
+      return res
+        .status(404)
+        .json({ status: false, message: "invalid departmentName or passowrd" });
+    }
+
+    if (existingUser.role != "admin") {
+      return res
+        .status(404)
+        .json({ status: false, message: "Can't access to this account" });
+    }
+
+    const token = jwt.sign(
+      {
+        email: existingUser.email,
+        name: existingUser.username,
+        id: existingUser._id,
+      },
+      SECRET_KEY
+    );
+    console.log("existingUser: ", existingUser);
     res.status(200).json({
       status: true,
       user: existingUser,
@@ -223,6 +276,7 @@ const updateUser = async (req, res) => {
 module.exports = {
   signup,
   signin,
+  adminLogin,
   sendEmail,
   verifyOtp,
   updatePassword,

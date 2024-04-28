@@ -31,7 +31,14 @@ const UserSchema = mongoose.Schema(
       type: String,
       require: true,
     },
+    role: {
+      type: String,
+      required: false,
+      default: "user",
+    },
+    // departmentName: {
 
+    // },
     verified: {
       type: Boolean,
       default: false,
