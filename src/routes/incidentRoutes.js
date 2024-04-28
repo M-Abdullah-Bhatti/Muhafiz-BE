@@ -6,6 +6,8 @@ const {
   getAllMyIncidents,
   getAllIncidentsForAdmin,
   incidentDashboard,
+  deleteIncident,
+  resolveCase,
 } = require("../controller/incidentController");
 const { isAuthenticatedUser } = require("../middleware/authMiddleware");
 const incidentRouter = express.Router();
@@ -25,8 +27,11 @@ incidentRouter.get(
 );
 incidentRouter.get(
   "/incidentDashboard",
-  // isAuthenticatedUser,
+  isAuthenticatedUser,
   incidentDashboard
 );
+incidentRouter.delete("/deleteIncident", isAuthenticatedUser, deleteIncident);
+
+incidentRouter.put("/resolveIncident", isAuthenticatedUser, resolveCase);
 
 module.exports = incidentRouter;
